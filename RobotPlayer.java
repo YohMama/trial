@@ -34,17 +34,16 @@ public class RobotPlayer {
 			
 			if (me.getType() == RobotType.HQ) {
 				try {
-					System.out.println(me.senseRobotAtLocation(HQTransfer()));
+					HQTransfer();
 					nearATK();
 					trySpawn(directions[rand.nextInt(8)], RobotType.BEAVER);
 				} catch (Exception e) {
 					System.out.println("HQ Exception");
-					System.out.println(me.getType() + " " + Clock.getBytecodesLeft());
                     e.printStackTrace();
 				}
 			} else {
 				try {
-					System.out.println(me.senseRobotAtLocation(unitTransfer()));
+					unitTransfer();
 				} catch (Exception e) {
 					System.out.println("Non-HQ Transfer Exception");
 					System.out.println(me.getType() + " " + Clock.getBytecodesLeft());
@@ -72,20 +71,27 @@ public class RobotPlayer {
 					e.printStackTrace();
 				}
 			}
+			
+			me.yield();
 		}
 	}
 	
-	static MapLocation HQTransfer() throws GameActionException {
+	static void HQTransfer() throws GameActionException {
+//		System.out.println(Clock.getBytecodesLeft() + " Transfer start");
 		RobotInfo[] nearGoods = me.senseNearbyRobots(GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED, goodGuys);
+//		System.out.println(Clock.getBytecodesLeft() + " Sense robots");
 		double sup = me.getSupplyLevel();
+//		System.out.println(Clock.getBytecodesLeft() + " Check supply");
 		if (nearGoods.length > 1 && sup >= 1) {
 			MapLocation home = me.senseHQLocation();
+	//		System.out.println(Clock.getBytecodesLeft() + " Sense HQ");
 			for (int i = nearGoods.length - 1; i > 0; i--) {
 				if (nearGoods[i].supplyLevel < nearGoods[i-1].supplyLevel || (int) nearGoods[i].supplyLevel == (int) nearGoods[i-1].supplyLevel && nearGoods[i].location.distanceSquaredTo(home) > nearGoods[i-1].location.distanceSquaredTo(home)) {
 					RobotInfo tmp = nearGoods[i];
 					nearGoods[i] = nearGoods[i-1];
 					nearGoods[i-1] = tmp;
 				}
+		//		System.out.println(Clock.getBytecodesLeft() + " Sort robots A " + i);
 			}
 			
 			if (nearGoods.length > 2) {
@@ -95,54 +101,60 @@ public class RobotPlayer {
 						nearGoods[i] = nearGoods[i-1];
 						nearGoods[i-1] = tmp;
 					}
+			//		System.out.println(Clock.getBytecodesLeft() + " Sort robots B " + i);
 				}
 			}
 			
 			for (int i = 0; i < 2; i++) {
-				me.transferSupplies((int) sup/2, nearGoods[i].location);
+				if (Clock.getBytecodesLeft() > 525) {
+					me.transferSupplies((int) sup/2, nearGoods[i].location);
+			//		System.out.println(Clock.getBytecodesLeft() + " Transfer complete " + i);
+				}
 			}
-		} else if (nearGoods.length > 0 && sup >= 1) {
+		} else if (nearGoods.length > 0 && sup >= 1 && Clock.getBytecodesLeft() > 525) {
+	//		System.out.println(Clock.getBytecodesLeft() + " Check bytecodes left");
 			me.transferSupplies((int) sup, nearGoods[0].location);
-		}
-		
-		if (nearGoods.length > 0) {
-			return nearGoods[0].location;
-		} else {
-			return null;
+	//		System.out.println(Clock.getBytecodesLeft() + "Transfer complete");
 		}
 	}
 	
-	static MapLocation unitTransfer() throws GameActionException {
+	static void unitTransfer() throws GameActionException {
+//		System.out.println(Clock.getBytecodesLeft() + " Transfer start");
 		RobotInfo[] nearGoods = me.senseNearbyRobots(GameConstants.SUPPLY_TRANSFER_RADIUS_SQUARED, goodGuys);
+//		System.out.println(Clock.getBytecodesLeft() + " Sense robots");
 		double sup = me.getSupplyLevel();
+//		System.out.println(Clock.getBytecodesLeft() + " Check supply");
 		if (nearGoods.length > 1 && sup >= 1) {
 			MapLocation home = me.senseHQLocation();
+	//		System.out.println(Clock.getBytecodesLeft() + " Sense HQ");
 			for (int i = nearGoods.length - 1; i > 0; i--) {
 				if (nearGoods[i].supplyLevel < nearGoods[i-1].supplyLevel || (int) nearGoods[i].supplyLevel == (int) nearGoods[i-1].supplyLevel && nearGoods[i].location.distanceSquaredTo(home) > nearGoods[i-1].location.distanceSquaredTo(home)) {
 					RobotInfo tmp = nearGoods[i];
 					nearGoods[i] = nearGoods[i-1];
 					nearGoods[i-1] = tmp;
 				}
+		//		System.out.println(Clock.getBytecodesLeft() + " Sort robots " + i);
 			}
 		}
 		
-		if (nearGoods.length > 0 && sup >= 1) {
+		if (nearGoods.length > 0 && sup >= 1 && Clock.getBytecodesLeft() > 525) {
+	//		System.out.println(Clock.getBytecodesLeft() + " Check bytecodes left");
 			if (me.getType() == RobotType.TOWER) {
+		//		System.out.println(Clock.getBytecodesLeft() + " Check if Tower type");
 				me.transferSupplies((int) sup, nearGoods[0].location);
+		//		System.out.println(Clock.getBytecodesLeft() + " Transfer complete");
 			} else if (sup > nearGoods[0].supplyLevel) {
+		//		System.out.println(Clock.getBytecodesLeft() + " Check if Tower type");
 				me.transferSupplies((int) Math.floor((sup - nearGoods[0].supplyLevel) / 1.5), nearGoods[0].location);
+		//		System.out.println(Clock.getBytecodesLeft() + "Transfer complete");
 			}
-		}
-		
-		if (nearGoods.length > 0) {
-			return nearGoods[0].location;
-		} else {
-			return null;
 		}
 	}
 	
 	static void nearATK() throws GameActionException {
+//		System.out.println(Clock.getBytecodesLeft() + " atk start");
 		RobotInfo[] nearBads = me.senseNearbyRobots(atkRange, badGuys);
+//		System.out.println(Clock.getBytecodesLeft() + " Sense robots");
 		
 		if (nearBads.length > 0) {
 			MapLocation target = nearBads[0].location;
@@ -152,11 +164,14 @@ public class RobotPlayer {
 					if (nearBads[i].location.distanceSquaredTo(me.getLocation()) < target.distanceSquaredTo(me.getLocation())) {
 						target = nearBads[i].location;
 					}
+			//		System.out.println(Clock.getBytecodesLeft() + " Sort robots");
 				}
 			}
 			
 			if (me.isWeaponReady()) {
+		//		System.out.println(Clock.getBytecodesLeft() + " Check weapon");
 				me.attackLocation(target);
+		//		System.out.println(Clock.getBytecodesLeft() + " atk complete");
 			}
 		}
 	}
@@ -166,10 +181,14 @@ public class RobotPlayer {
 	}
 	
 	static void HQMove(MapLocation bad) throws GameActionException {
+//		System.out.println(Clock.getBytecodesLeft() + " Move start");
 		Direction toHQ = me.getLocation().directionTo(bad);
+//		System.out.println(Clock.getBytecodesLeft() + " get HQ direction");
 		
 		if (me.canMove(toHQ) && me.isCoreReady()) {
+	//		System.out.println(Clock.getBytecodesLeft() + " Check Move and ready");
 			me.move(toHQ);
+	//		System.out.println(Clock.getBytecodesLeft() + " Move complete");
 		}
 	}
 	
@@ -184,18 +203,25 @@ public class RobotPlayer {
 	}
 	
 	static void trySpawn(Direction d, RobotType type) throws GameActionException {
+//		System.out.println(Clock.getBytecodesLeft() + " Spawn start");
 		int dIndex = 0;
 		while (dIndex < 7 && !me.canSpawn(directions[dIndex], type)) {
+	//		System.out.println(Clock.getBytecodesLeft() + " Check Spawn");
 			dIndex++;
 		}
 		if (dIndex < 7 && me.isCoreReady()) {
+	//		System.out.println(Clock.getBytecodesLeft() + " Check ready");
 			me.spawn(directions[dIndex], type);
+	//		System.out.println(Clock.getBytecodesLeft() + " Spawn complete");
 		}
 	}
 	
 	static void tryMine() throws GameActionException {
+//		System.out.println(Clock.getBytecodesLeft() + " Mine start");
 		if (me.senseOre(me.getLocation()) > 10 && me.canMine() && me.isCoreReady()) {
+	//		System.out.println(Clock.getBytecodesLeft() + " Sense ore + Check location + Check mine + Check ready");
 			me.mine();
+	//		System.out.println(Clock.getBytecodesLeft() + " Mine complete");
 		}
 	}
 }
