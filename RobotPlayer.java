@@ -31,6 +31,7 @@ public class RobotPlayer {
 			
 			try {
 				me.setIndicatorString(0, me.getType().toString());
+				writeMap(origin);
 			} catch (Exception e) {
 				System.out.println("Unexpected exception");
 				e.printStackTrace();
@@ -38,6 +39,14 @@ public class RobotPlayer {
 			
 			if (me.getType() == RobotType.HQ) {
 				try {
+					if (Clock.getRoundNum() > 1950) {
+						for (int i = 0; i < 14400; i++) {
+							System.out.print(me.readBroadcast(i));
+							if (i % 120 == 119) {
+								System.out.println();
+							}
+						}
+					}
 					HQBroadcast();
 					HQTransfer(goodHQ);
 					nearATK();
@@ -67,10 +76,10 @@ public class RobotPlayer {
 			
 			if (me.getType() == RobotType.BEAVER) {
 				try {
-//					randMove(directions[rand.nextInt(8)]);
+					randMove(directions[rand.nextInt(8)]);
 					nearATK();
 					tryMine();
-					HQMove(badHQ);
+//					HQMove(badHQ);
 				} catch (Exception e) {
 					System.out.println("BEAVER Exception");
 					e.printStackTrace();
@@ -134,10 +143,25 @@ public class RobotPlayer {
 		}
 	}
 	
-	static void writeMap() throws GameActionException {
-		me.getLocation();
-		if (me.readBroadcast(0) == 0) {
-			
+	static void writeMap(MapLocation center) throws GameActionException {
+		MapLocation here = me.getLocation();
+		MapLocation[] range = MapLocation.getAllMapLocationsWithinRadiusSq(here, 24);
+		int dx, dy, bIndex;
+		for (MapLocation i : range) {
+			System.out.println(i.toString());
+			dx = center.x - i.x;
+			dy = center.y - i.y;
+			bIndex = 7139 - 120 * dy - dx;
+			if (me.readBroadcast(bIndex) == 0) {
+				TerrainTile tile = me.senseTerrainTile(i);
+				if (tile == TerrainTile.NORMAL) {
+					me.broadcast(bIndex, 1);
+				} else if (tile == TerrainTile.VOID) {
+					me.broadcast(bIndex, 2);
+				} else if (tile == TerrainTile.OFF_MAP) {
+					me.broadcast(bIndex, 3);
+				}
+			}
 		}
 	}
 	
@@ -257,22 +281,23 @@ public class RobotPlayer {
 	
 	static void randMove(Direction d) throws GameActionException {
 		int dIndex = 0;
-		while (dIndex < 7 && !me.canMove(directions[dIndex])) {
+		while (dIndex < 7 && !me.canMove(d)) {
 			dIndex+=2;
+			d = d.rotateRight().rotateRight();
 		}
-		if (dIndex < 7) {
-			me.move(directions[dIndex]);
+		if (dIndex < 7 && me.isCoreReady()) {
+			me.move(d);
 		}
 	}
 	
 	static void trySpawn(Direction d, RobotType type) throws GameActionException {
 //		System.out.println(Clock.getBytecodesLeft() + " Spawn start");
 		int dIndex = 0;
-		while (dIndex < 7 && !me.canSpawn(directions[dIndex], type)) {
+		while (dIndex < 8 && !me.canSpawn(directions[dIndex], type)) {
 	//		System.out.println(Clock.getBytecodesLeft() + " Check Spawn");
 			dIndex++;
 		}
-		if (dIndex < 7 && me.isCoreReady()) {
+		if (dIndex < 8 && me.isCoreReady()) {
 	//		System.out.println(Clock.getBytecodesLeft() + " Check ready");
 			me.spawn(directions[dIndex], type);
 	//		System.out.println(Clock.getBytecodesLeft() + " Spawn complete");
