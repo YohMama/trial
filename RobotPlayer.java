@@ -148,7 +148,6 @@ public class RobotPlayer {
 		MapLocation[] range = MapLocation.getAllMapLocationsWithinRadiusSq(here, 24);
 		int dx, dy, bIndex;
 		for (MapLocation i : range) {
-			System.out.println(i.toString());
 			dx = center.x - i.x;
 			dy = center.y - i.y;
 			bIndex = 7139 - 120 * dy - dx;
