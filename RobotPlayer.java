@@ -31,10 +31,6 @@ public class RobotPlayer {
 			
 			try {
 				me.setIndicatorString(0, me.getType().toString());
-<<<<<<< HEAD
-=======
-				writeMap(origin);
->>>>>>> da0ffd83b4dcb0f8b320bcc107d2d283c770c957
 			} catch (Exception e) {
 				System.out.println("Unexpected exception");
 				e.printStackTrace();
@@ -42,31 +38,19 @@ public class RobotPlayer {
 			
 			if (me.getType() == RobotType.HQ) {
 				try {
-<<<<<<< HEAD
 					/*if (Clock.getRoundNum() > 1950) {
-=======
-					if (Clock.getRoundNum() > 1950) {
->>>>>>> da0ffd83b4dcb0f8b320bcc107d2d283c770c957
 						for (int i = 0; i < 14400; i++) {
 							System.out.print(me.readBroadcast(i));
 							if (i % 120 == 119) {
 								System.out.println();
 							}
 						}
-<<<<<<< HEAD
 					}*/
 					HQBroadcast();
 					HQTransfer(goodHQ);
 					nearATK();
 					trySpawn(badHQ.directionTo(goodHQ), RobotType.BEAVER);
 //					map(origin);
-=======
-					}
-					HQBroadcast();
-					HQTransfer(goodHQ);
-					nearATK();
-					trySpawn(directions[rand.nextInt(8)], RobotType.BEAVER);
->>>>>>> da0ffd83b4dcb0f8b320bcc107d2d283c770c957
 				} catch (Exception e) {
 					System.out.println("HQ Exception");
                     e.printStackTrace();
@@ -76,10 +60,6 @@ public class RobotPlayer {
 					unitTransfer(goodHQ);
 				} catch (Exception e) {
 					System.out.println("Non-HQ Transfer Exception");
-<<<<<<< HEAD
-=======
-					System.out.println(me.getType() + " " + Clock.getBytecodesLeft());
->>>>>>> da0ffd83b4dcb0f8b320bcc107d2d283c770c957
 					e.printStackTrace();
 				}
 			}
@@ -95,10 +75,7 @@ public class RobotPlayer {
 			
 			if (me.getType() == RobotType.BEAVER) {
 				try {
-<<<<<<< HEAD
 					tryBuild(goodHQ.directionTo(badHQ), goodHQ);
-=======
->>>>>>> da0ffd83b4dcb0f8b320bcc107d2d283c770c957
 					randMove(directions[rand.nextInt(8)]);
 					nearATK();
 					tryMine();
@@ -109,7 +86,6 @@ public class RobotPlayer {
 				}
 			}
 			
-<<<<<<< HEAD
 			if (me.getType() == RobotType.MINERFACTORY) {
 				try {
 					trySpawn(directions[rand.nextInt(8)]);
@@ -127,8 +103,6 @@ public class RobotPlayer {
 					e.printStackTrace();
 				}
 			
-=======
->>>>>>> da0ffd83b4dcb0f8b320bcc107d2d283c770c957
 			me.yield();
 		}
 	}
@@ -186,11 +160,7 @@ public class RobotPlayer {
 		}
 	}
 	
-<<<<<<< HEAD
 /*	static void map(MapLocation center) throws GameActionException {
-=======
-	static void writeMap(MapLocation center) throws GameActionException {
->>>>>>> da0ffd83b4dcb0f8b320bcc107d2d283c770c957
 		MapLocation here = me.getLocation();
 		MapLocation[] range = MapLocation.getAllMapLocationsWithinRadiusSq(here, 24);
 		int dx, dy, bIndex;
@@ -209,15 +179,11 @@ public class RobotPlayer {
 				}
 			}
 		}
-<<<<<<< HEAD
 		
 		if (me.getType() != RobotType.DRONE && me.getType() != RobotType.MISSILE) {
 			
 		}
 	}*/
-=======
-	}
->>>>>>> da0ffd83b4dcb0f8b320bcc107d2d283c770c957
 	
 	static void HQTransfer(MapLocation home) throws GameActionException {
 //		System.out.println(Clock.getBytecodesLeft() + " Transfer start");
@@ -317,11 +283,7 @@ public class RobotPlayer {
 		}
 	}
 	
-<<<<<<< HEAD
 	static void mine() throws GameActionException{
-=======
-	static void mineMove() throws GameActionException{
->>>>>>> da0ffd83b4dcb0f8b320bcc107d2d283c770c957
 		
 	}
 	
@@ -338,26 +300,16 @@ public class RobotPlayer {
 	}
 	
 	static void randMove(Direction d) throws GameActionException {
-<<<<<<< HEAD
 		int counter = 0;
 		while (counter < 4 && !me.canMove(d)) {
 			d = d.rotateRight().rotateRight();
 			counter++;
 		}
 		if (me.isCoreReady()) {
-=======
-		int dIndex = 0;
-		while (dIndex < 7 && !me.canMove(d)) {
-			dIndex+=2;
-			d = d.rotateRight().rotateRight();
-		}
-		if (dIndex < 7 && me.isCoreReady()) {
->>>>>>> da0ffd83b4dcb0f8b320bcc107d2d283c770c957
 			me.move(d);
 		}
 	}
 	
-<<<<<<< HEAD
 	static void trySpawn(Direction d) throws GameActionException {
 //		System.out.println(Clock.getBytecodesLeft() + " Spawn start");
 		int counter = 0;
@@ -406,19 +358,6 @@ public class RobotPlayer {
 				me.build(d, type);
 //				System.out.println(Clock.getBytecodesLeft() + " Spawn complete");
 			}
-=======
-	static void trySpawn(Direction d, RobotType type) throws GameActionException {
-//		System.out.println(Clock.getBytecodesLeft() + " Spawn start");
-		int dIndex = 0;
-		while (dIndex < 8 && !me.canSpawn(directions[dIndex], type)) {
-	//		System.out.println(Clock.getBytecodesLeft() + " Check Spawn");
-			dIndex++;
-		}
-		if (dIndex < 8 && me.isCoreReady()) {
-	//		System.out.println(Clock.getBytecodesLeft() + " Check ready");
-			me.spawn(directions[dIndex], type);
-	//		System.out.println(Clock.getBytecodesLeft() + " Spawn complete");
->>>>>>> da0ffd83b4dcb0f8b320bcc107d2d283c770c957
 		}
 	}
 	
